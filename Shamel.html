@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>اختبار Pharmacology (62 سؤال)</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 10px; line-height: 1.6; margin: 0; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; text-align: center; color: #333; margin-bottom: 20px; }
+        .question { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #ddd; background: #fff; }
+        .question p { font-size: 1.1rem; margin-top: 0; color: #222; }
+        
+        /* تحسين الاختيارات للموبايل */
+        .options label { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            margin: 8px 0; 
+            border: 1px solid #ddd; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            transition: all 0.2s ease; 
+            background-color: #fafafa;
+            -webkit-tap-highlight-color: transparent; /* منع الوميض الأزرق في الموبايل */
+        }
+        .options input[type="radio"] { 
+            margin-left: 10px; 
+            margin-right: 0;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0; /* منع صغر حجم الدائرة في النصوص الطويلة */
+        }
+        
+        /* تأثير عند تمرير الماوس أو الاختيار */
+        .options label:hover { background-color: #f0f0f0; }
+        
+        /* الألوان عند التصحيح */
+        .correct { background-color: #d4edda !important; color: #155724 !important; border-color: #c3e6cb !important; font-weight: bold; }
+        .incorrect { background-color: #f8d7da !important; color: #721c24 !important; border-color: #f5c6cb !important; }
+        
+        /* الأزرار وتحسينها للمس */
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
+        button { 
+            flex: 1;
+            padding: 14px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 6px; 
+            background: #02028a; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button:active { transform: scale(0.98); }
+        
+        #result { 
+            margin-top: 20px; 
+            font-weight: bold; 
+            font-size: 1.3em; 
+            text-align: center; 
+            padding: 15px; 
+            border-radius: 6px;
+        }
+        .score-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>اختبار الامتحانات السابقة (62 سؤال)</h1>
+    <div id="quizContainer"></div>
+    
+    <div class="btn-container">
+        <button onclick="submitQuiz()">Submit</button>
+        <button onclick="location.reload()" style="background: #6c757d;">Restart</button>
+    </div>
+    
+    <div id="result"></div>
+</div>
+
+<script>
+    const questions = [
+        { q: "The Antacids are:", a: ["weak acids", "weak base", "strong acid", "strong base"], correct: 1 },
+        { q: "All of them are PPI except:", a: ["pantoprazole", "omeprazole", "lansoprazole", "metronidazole"], correct: 3 },
+        { q: "Misoprostol is contraindicated in pregnancy because it my do......", a: ["vomiting", "diarrhea", "abortion", "constipation"], correct: 2 },
+        { q: "serotonin 5-HT3 antagonist....", a: ["domperidone", "meclizine", "dolasetron", "castor oil"], correct: 2 },
+        { q: "clinical use of PPI for treatment", a: ["PUD", "vomiting", "COPD", "HF"], correct: 0 },
+        { q: "gastric acid secretion stimulated by all of this except", a: ["Histamine", "ACH", "gastrin", "epinephrine"], correct: 3 },
+        { q: "......... used for the prevention of NSAID-induced gastric ulcer", a: ["Misoprostol", "cimetidine", "sucralfate", "ranitidine"], correct: 0 },
+        { q: "All of the following drugs act by reducing gastric acid secretion, Except:", a: ["Omeprazole", "Famotidine", "Pirenzepine", "Sucralfate"], correct: 3 },
+        { q: "the following statement about antacid is true:", a: ["Weak acids that neutralize gastric pH", "Aluminum antacids cause diarrhea and magnesium antacids cause constipation", "Aluminum antacids cause constipation and magnesium antacids cause diarrhea"], correct: 2 },
+        { q: "The following antiemetic act by blocking D2 receptor in the CTZ:", a: ["Metoclopramide", "Cisapride", "Chlorpromazine", "Domperidone"], correct: 3 },
+        { q: "interferes with most of the CYP450 enzymes and thus leads to many drug interactions.", a: ["Famotidine", "Omeprazole", "Ondansetron", "Cimetidine"], correct: 3 },
+        { q: "Which of the following is the most effective drug for motion sickness?", a: ["Scopolamine", "Chlorpromazine", "Prochlorperazine", "Haloperidol"], correct: 0 },
+        { q: "Cytoprotective drug", a: ["Misoprostol", "Ranitidine", "Omeprazole", "Ketoconazole"], correct: 0 },
+        { q: "main causes of peptic ulcer?", a: ["chronic use of NSAID", "Helicobacter pylori", "Low HCL Secretion", "A&B"], correct: 3 },
+        { q: "witch of the following which is a constipating antacid?", a: ["Calcium carbonate", "Sodium bicarbonate", "Magnesium hydroxide", "Aluminum hydroxide"], correct: 3 },
+        { q: "Drug is contraindicated in pregnancy", a: ["Misoprostol", "Ranitidine", "Omeprazole", "Ketoconazole"], correct: 0 },
+        { q: "Which of the following is a Proton pump inhibitor?", a: ["Ranitidine", "Misoprostol", "Omeprazole", "Laxatidine"], correct: 2 },
+        { q: "Which prostaglandin is used in NSAID induced ulcers?", a: ["Misoprostol", "Carboprost", "Mirtazapine", "Milrinone"], correct: 0 },
+        { q: "Which of the following used in zollinger elisson syndrome :", a: ["Cimitidine", "Omeprazole", "Ampicillin", "Atropine"], correct: 1 },
+        { q: "Cimitidine used in ttt of NSAIDS induced peptic ulcer", a: ["True", "False"], correct: 1 },
+        { q: "Chemotherapy induced vomiting treated by:", a: ["Atropine", "Miclizine", "Metochlopramide", "Dolasetron"], correct: 3 },
+        { q: "examples of drug that work inhibit H2-histamine receptor and decrease gastric acid secretion....", a: ["dicyclomine", "ranitidine", "tetracycline", "misoprostol"], correct: 1 },
+        { q: "Single antimicrobial therapy in ttt of H.pylori is significant:", a: ["True", "False"], correct: 1 },
+        { q: "Side effects of dopamine receptor antagonist in ttt of vomiting include", a: ["Dry mouth", "Blurred vision", "A and b", "Extra pyramidal manifestations"], correct: 3 },
+        { q: "causes impotence by antagonise androgen receptors", a: ["Cimitidine", "Omeprazole", "Atropine", "Dolasetron"], correct: 0 },
+        { q: "principles of ulcer management", a: ["symptomatic relief", "promotion of ulcer healing", "prevention of complication", "all of the above are correct"], correct: 3 },
+        { q: "sucralfate........", a: ["is not so effective in symptom relief", "Antacids are available", "is less effective than cimetidine", "protects ulcerated areas from further damage and promotes healing"], correct: 3 },
+        { q: "Misoprostol is safe in pregnant women", a: ["True", "False"], correct: 1 },
+        { q: "an important receptor area for emetic stimuli is.", a: ["CAZ", "CPZ", "CTZ"], correct: 2 },
+        { q: "antacids involve except:-", a: ["sodium bicarbonate", "magnesium salts", "aluminium salts", "sucralfate"], correct: 3 },
+        { q: "Mechanism of action of Rantidine is", a: ["PPIs", "H2 blocker", "Dopamine receptor", "Prostaglandin analog"], correct: 1 },
+        { q: "Zollinger Elisson syndrome causing increase in", a: ["Pepsin", "Gastrin", "GH Hormone", "Estrogen"], correct: 1 },
+        { q: "medicine that works inhibits gastric acid secretion and is a synthetic analog of prostaglandin E1.....", a: ["Amoxicillin", "sucralfate", "misoprostol", "dicyclomine"], correct: 2 },
+        { q: "drug use in the treatment of acute diarrhea...", a: ["diphenoxylate", "lubiprostone", "docusate sodium", "all of the above"], correct: 0 },
+        { q: "antacids.", a: ["react with gastric acid to form a neutral salt", "are very effective at healing gastric ulcers", "its effect on acid secretion lasts for long 5h", "all of the above are correct"], correct: 0 },
+        { q: "classify the castor oil and senna from..", a: ["bulk-forming laxatives", "osmotic agents", "Irritant laxatives"], correct: 2 },
+        { q: "examples of drug that are used antimicrobial agents .......", a: ["amoxicillin", "cimetidine", "famotidine", "ranitidine"], correct: 0 },
+        { q: "drugs enhancing mucosal resistance in the stomach are...", a: ["sucralfate", "bismuth chelate", "amoxicillin", "(a) and (b)"], correct: 3 },
+        { q: "sodium bicarbonate......", a: ["an antacid", "causes belching and distension of the stomach", "not used for long-term therapy", "all of the above are correct"], correct: 3 },
+        { q: "inhibits the proton pump which secretes H ions into the gastric lumen.....", a: ["cimetidine", "tetracycline", "Ranitidine", "omeprazole"], correct: 3 },
+        { q: "All of the following are true about mucosal cytoprotective agents", a: ["Sucralfate activated in presence of antacid", "Mesoprestol cause abortion in pregnant women", "Carbionoxolone has mineralocorticoid activity to avoided in CHF", "Helicobacter pylori eliminated by bismuth compounds."], correct: 3 },
+        { q: "Which of the following increase acid secretion by activation of adenylyl cyclase", a: ["PG", "Histamine", "Gastrin", "Ach"], correct: 1 },
+        { q: "Which of the following opioid compounds with selective Antidiarrheal effect", a: ["Clonidine", "Loperamide", "Mineral oil", "Morphine"], correct: 1 },
+        { q: "Which of the following block dopaminergic and serotonergic receptors", a: ["Chlorpromazine", "metoclopramide", "ondansetron"], correct: 0 },
+        { q: "Which of the following laxatives preferred in hemorrhoid patient?", a: ["A-Bran", "B-Methylcellulose", "C-mineral oil"], correct: 1 },
+        { q: "All of the following are true about fexofenadine except", a: ["Antihistamines", "Nonsedative", "2nd generation", "Used in nausea and vomiting"], correct: 3 },
+        { q: "acid secretion", a: ["is inhibited by acetylcholine", "is stimulated by gastrin", "is inhibited by histamine", "is stimulated by prostaglandin E"], correct: 1 },
+        { q: "A drug of choice in treatment of motion sickness", a: ["Dronabinol", "Hyoscine", "dolasteron", "Domepridone"], correct: 1 },
+        { q: "A drug not used in the treatment of H.pylori is", a: ["Cisapride", "Clarithromycin", "Metronidazole", "Omeprazole"], correct: 0 },
+        { q: "A drug of choice for treating CINV is", a: ["Aprepitant", "Prochlorperazine", "Ondansetron", "Metoclopramide"], correct: 2 },
+        { q: "Gynecomastia can occur as a side effect of", a: ["Omeprazole", "Cimetidine", "Famotidine", "Atorvastatin"], correct: 1 },
+        { q: "NSAID induced ulcer are treated by", a: ["Antacids", "H2 blockers", "Misoprostol", "PPIs"], correct: 2 },
+        { q: "Drugs used to decrease secretion of HCL except", a: ["Omeprazol", "Ranitidine", "Antacid"], correct: 2 },
+        { q: "Which of the following drugs produces extrapyramidal side effects?", a: ["Metoclopramide", "Domperidone", "Fosoprepitant", "gronisteron"], correct: 0 },
+        { q: "is example of HISTAMINE receptor ANTAGONIST?", a: ["metronidazole", "amoxicilline", "Famotidine", "Mg hydroxide"], correct: 2 },
+        { q: "Esomeprazole acts by inhibiting", a: ["H*K ATPase pump", "H'Na ATPase pump", "H pump", "H2 blockers"], correct: 0 },
+        { q: "osmotic agent can be taken orally", a: ["glycerin", "lactulose", "docusate", "omeprazole"], correct: 1 },
+        { q: "Which laxative preferred in acute attack?", a: ["Bran", "Lactulose", "Psylium seeds", "Glycerol"], correct: 1 },
+        { q: "is one of M receptor antagonist:", a: ["Atropine", "ACH", "acyclovir", "omeprazole"], correct: 0 },
+        { q: "Which of the following agonists is beneficial in NSAID induced gastric ulcer?", a: ["PGE1", "PGE2", "PGD2", "PG12"], correct: 0 },
+        { q: "Bisacodyl is", a: ["Bulk forming", "Stool softner", "Stimulant purgative", "Osmotic purgative"], correct: 2 },
+        { q: "Aprepitant is which of the following?", a: ["Dopaminergic agonist", "H1-receptor antagonist", "Substance P antagonist", "5-HT3 antagonist"], correct: 2 }
+    ];
+
+    const container = document.getElementById('quizContainer');
+    questions.forEach((q, i) => {
+        let html = `<div class="question" id="q${i}"><p><strong>س${i+1}:</strong> ${q.q}</p><div class="options">`;
+        q.a.forEach((opt, j) => {
+            html += `<label><input type="radio" name="q${i}" value="${j}"> <span>${opt}</span></label>`;
+        });
+        container.innerHTML += html + `</div></div>`;
+    });
+
+    function submitQuiz() {
+        let score = 0;
+        questions.forEach((item, i) => {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const options = document.querySelectorAll(`input[name="q${i}"]`);
+            options.forEach((opt, j) => {
+                const parent = opt.parentElement;
+                if(j === item.correct) {
+                    parent.classList.add('correct');
+                } else if(selected && selected.value == j) {
+                    parent.classList.add('incorrect');
+                }
+            });
+            if(selected && selected.value == item.correct) score++;
+        });
+        
+        const resultDiv = document.getElementById('result');
+        resultDiv.className = "score-success";
+        resultDiv.innerText = `النتيجة: ${score} من ${questions.length} (${((score/questions.length)*100).toFixed(1)}%)`;
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+</script>
+
+</body>
+</html>
