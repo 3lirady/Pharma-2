@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>اختبار الصيدلة</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 10px; color: #333; line-height: 1.6; }
+        .quiz-container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { text-align: center; font-size: 24px; }
+        .question { margin-bottom: 25px; padding: 15px; border: 1px solid #ddd; border-radius: 10px; }
+        .options label { display: block; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .options input { margin-left: 10px; }
+        .correct { background-color: #d4edda !important; border-color: #28a745 !important; }
+        .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; }
+        .result { margin: 20px 0; font-size: 18px; font-weight: bold; text-align: center; }
+        .progress-container { background: #eee; height: 15px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: #007bff; width: 0%; transition: width 0.5s; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        #submitBtn { background: #007bff; color: #fff; }
+        #restartBtn { background: #6c757d; color: #fff; display: none; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>اختبار الصيدلة</h1>
+        <div id="quiz"></div>
+        <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+        <div class="result" id="result"></div>
+        <button id="submitBtn">تسليم الإجابات</button>
+        <button id="restartBtn">إعادة الاختبار</button>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "According to the physical theory, how do general anesthetics disrupt nerve transmission?", options: ["By increasing glutamate release", "By blocking muscarinic receptors in the heart", "By decreasing the lipid solubility of the blood-brain barrier", "By forming clathrates with water that aggregate at synapses"], a: 3},
+            {q: "Which stage of anesthesia is characterized by surgical anesthesia and skeletal muscle relaxation?", options: ["Stage I", "Stage II", "Stage III", "Stage IV"], a: 2},
+            {q: "What is the primary definition of General Anesthetics?", options: ["Agents causing local loss of pain without loss of consciousness", "Agents that only provide skeletal muscle relaxation", "Irreversible inhibition of motor nerves and sensory perception", "Reversible CNS depression with loss of sensation, consciousness, and reflexes"], a: 3},
+            {q: "Which anesthetic gas is commonly known as 'laughing gas' and used frequently in dentistry?", options: ["Nitrous oxide", "Ether", "Halothane", "Isoflurane"], a: 0},
+            {q: "Which intravenous anesthetic produces 'dissociative anesthesia'?", options: ["Thiopental", "Propofol", "Ketamine", "Midazolam"], a: 2},
+            {q: "Halothane should be avoided in patients with which of the following conditions?", options: ["Asthma", "Hepatic diseases", "Renal failure", "Hypotension"], a: 1},
+            {q: "What is the primary reason for adding Carbidopa to L-Dopa in treating Parkinsonism?", options: ["To increase the metabolism of L-Dopa in the brain", "To inhibit peripheral dopa decarboxylase", "To act as a direct D2 receptor agonist", "To decrease the absorption of L-Dopa"], a: 1},
+            {q: "Why should Benzodiazepines be preferred over Barbiturates as preanesthetic sedatives?", options: ["Benzodiazepines depend on GABA and have a ceiling effect", "Benzodiazepines are direct Chloride channel openers", "Benzodiazepines are liver microsomal enzyme inducers", "Benzodiazepines have a narrower therapeutic window"], a: 0},
+            {q: "What is the common side effect of Phenytoin in children?", options: ["Gum hyperplasia", "Dry mouth", "Hypertension", "Weight loss"], a: 0},
+            {q: "Which antiepileptic drug is considered the 'Drug of Choice' for Petit-mal (Absence) seizures?", options: ["Carbamazepine", "Phenobarbital", "Ethosuximide", "Pregabalin"], a: 2},
+            {q: "Which drug is the first choice for treating Status Epilepticus (I.V.)?", options: ["Ethosuximide", "Phenytoin", "Diazepam", "Sodium Valproate"], a: 2},
+            {q: "In Alzheimer's disease, memantine acts by blocking which receptors?", options: ["GABA receptors", "Nicotinic receptors", "NMDA (Glutamate) receptors", "D2 receptors"], a: 2},
+            {q: "What is the mechanism of action of Local Anesthetics?", options: ["Blocking Sodium channels", "Blocking Potassium channels", "Simulating Chloride influx", "Blocking Calcium channels"], a: 0},
+            {q: "Why is Adrenaline often combined with local anesthetics?", options: ["To cause vasoconstriction, increasing duration and decreasing toxicity", "To act as a buffer for pH", "To increase systemic absorption", "To prevent allergic reactions to ester drugs"], a: 0},
+            {q: "Which drug is a MAO-B inhibitor used in Parkinsonism to increase Dopamine levels?", options: ["Amantadine", "Entacapone", "Selegiline", "Bromocriptine"], a: 2},
+            {q: "In depression, the 'Cheese Reaction' is a hypertensive crisis caused by the interaction of Tyramine with which class of drugs?", options: ["SSRIs", "TCAs", "MAO inhibitors", "SNRIs"], a: 2},
+            {q: "Which of the following is a Short-Acting B2 Agonist (SABA) used for 'quick relief' in asthma?", options: ["Salbutamol", "Formoterol", "Salmeterol", "Tiotropium"], a: 0},
+            {q: "Which antidepressant is known for causing 'Atropine-like' side effects such as dry mouth and constipation?", options: ["Imipramine", "Fluoxetine", "Dapoxetine", "Maprotiline"], a: 0},
+            {q: "Which Long-Acting Muscarinic Antagonist (LAMA) is suitable for once-daily dosing in COPD?", options: ["Ipratropium bromide", "Atropine", "Tiotropium bromide", "Salmeterol"], a: 2},
+            {q: "What is the mechanism of action of Sucralfate in treating peptic ulcers?", options: ["It neutralizes stomach acid directly", "It forms a physical barrier over the ulcer base", "It inhibits the H+/K+ ATPase pump", "It blocks H2 receptors on parietal cells"], a: 1},
+            {q: "Why is Misoprostol contraindicated during pregnancy?", options: ["It causes severe hypertension", "It inhibits fetal lung development", "It leads to fetal tooth discoloration", "It can cause uterine contractions and abortion"], a: 3},
+            {q: "Which area of the brain is located 'outside' the blood-brain barrier and triggers vomiting when it detects toxins?", options: ["Vomiting center", "Basal ganglia", "Chemoreceptor trigger zone (CTZ)", "Limbic system"], a: 2},
+            {q: "Which drug is used as an antidote for Benzodiazepine overdose?", options: ["Naloxone", "Atropine", "Flumazenil", "Dantrolene"], a: 2},
+            {q: "A patient taking Phenobarbital for a long time might develop which bone-related condition?", options: ["Osteoarthritis", "Osteomalacia/Rickets", "Bone marrow aplasia", "Bone cancer"], a: 1},
+            {q: "What distinguishes Amide local anesthetics from Ester local anesthetics?", options: ["Amides are hydrolyzed by esterases in the blood", "Amides have a longer duration of action and are metabolized in the liver", "Esters are only used for spinal anesthesia", "Amides are more likely to cause allergic reactions"], a: 1},
+            {q: "Which neurotransmitter's overstimulation is linked to the 'Glutamate theory' of Alzheimer's?", options: ["Acetylcholine", "Dopamine", "Serotonin", "Glutamate"], a: 3}
+        ];
+
+        const quizContainer = document.getElementById('quiz');
+        function init() {
+            quizContainer.innerHTML = questions.map((item, idx) => `
+                <div class="question">
+                    <p>${idx + 1}. ${item.q}</p>
+                    <div class="options">
+                        ${item.options.map((opt, i) => `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('submitBtn').onclick = () => {
+            let score = 0;
+            questions.forEach((item, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                const all = document.querySelectorAll(`input[name="q${idx}"]`);
+                all.forEach((radio, i) => {
+                    const label = radio.parentElement;
+                    radio.disabled = true;
+                    if(i === item.a) label.classList.add('correct');
+                    else if(selected && selected.value == i) label.classList.add('wrong');
+                });
+                if(selected && selected.value == item.a) score++;
+            });
+            document.getElementById('result').innerText = `النتيجة: ${score} من ${questions.length}`;
+            document.getElementById('progress').style.width = (score / questions.length) * 100 + "%";
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'block';
+        };
+
+        document.getElementById('restartBtn').onclick = () => location.reload();
+        init();
+    </script>
+</body>
+</html>
